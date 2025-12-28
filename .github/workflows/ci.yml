@@ -8,14 +8,14 @@ on:
 
 permissions:
   contents: read
-  security-events: write # Wymagane, aby wrzucić raporty bezpieczeństwa do zakładki Security w GitHub
+  security-events: write
 
 jobs:
   # ---------------------------------------------------
   # JOB 1: QUALTY & TESTS (Jakość kodu i testy funkcjonalne)
   # ---------------------------------------------------
   build-and-test:
-    name: Build, Lint & Unit Tests
+    name: Build, Lint
     runs-on: ubuntu-latest
     
     env:
@@ -51,7 +51,7 @@ jobs:
       - name: Django System Check
         run: python manage.py check
 
-      # UNIT & INTEGRATION TESTS (to dopiero trzeba bedzie zrobic albo i nie...)
+      # UNIT & INTEGRATION TESTS 
 
   # ---------------------------------------------------
   # JOB 2: SECURITY SAST & SCA (Bezpieczeństwo statyczne)
@@ -91,7 +91,7 @@ jobs:
           scanners: 'vuln,secret,config' # Skanuj podatności, sekrety i config
 
   # ---------------------------------------------------
-  # JOB 3: DAST (Dynamiczne skanowanie - Opcjonalne)
+  # JOB 3: DAST (Dynamiczne skanowanie)
   # ---------------------------------------------------
   dast-scan:
     name: DAST (OWASP ZAP)
@@ -117,7 +117,7 @@ jobs:
         uses: zaproxy/action-baseline@v0.15.0
         with:
           target: 'http://localhost:8000'
-          # Failuj tylko na bardzo poważnych błędach, bo ZAP często zgłasza "false positives"
+          # Fail tylko na bardzo poważnych błędach, bo ZAP często zgłasza "false positives"
           fail_action: false 
           allow_issue_writing: false  # <--- Wyłączamy próbę tworzenia Issue
           cmd_options: '-a'
