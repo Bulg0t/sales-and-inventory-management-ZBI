@@ -21,7 +21,7 @@ jobs:
     env:
       SECRET_KEY: ${{ secrets.DJANGO_CI_KEY }}
       DEBUG: 'False'
-      DB_NAME: 'db.sqlite3' # Dla testów CI wystarczy SQLite
+      DB_NAME: 'db.sqlite3'
 
     steps:
       - name: Checkout code
@@ -42,9 +42,7 @@ jobs:
       # LINTING (Czystość kodu)
       - name: Lint with flake8
         run: |
-          # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings.
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
       # SYSTEM CHECK (Czy Django w ogóle działa)
@@ -75,6 +73,14 @@ jobs:
         run: |
           pip install bandit 
           bandit -r . -ll || true
+          bandit -r . -ll -f json -o bandit_report.json || true
+
+      - name: Upload Bandit Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sast-bandit-report
+          path: bandit_report.json
 # -------------------------------------------------------
       # 2. TRIVY (SCA & Secrets) - Oficjalna Akcja
       # Konfiguracja: scan-type: 'fs' (FileSystem)
@@ -86,9 +92,21 @@ jobs:
           scan-ref: '.'          # Skanuj obecny katalog
           hide-progress: false
           format: 'table'
+          output: 'trivy_report.txt'
           exit-code: '0'         # 0 = nie blokuj pipeline (dla nauki), 1 = blokuj
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL,HIGH,MEDIUM'
           scanners: 'vuln,secret,config' # Skanuj podatności, sekrety i config
+
+      - name: Upload Trivy Report
+        if: always()
+        run: cat trivy_report.txt
+      
+      - name: Archive Trivy Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sca-trivy-report
+          path: trivy_report.txt
 
   # ---------------------------------------------------
   # JOB 3: DAST (Dynamiczne skanowanie)
@@ -130,4 +148,3 @@ jobs:
           path: |
             report_zap_html.html
             report_zap_json.json
-            report_zap_md.md
