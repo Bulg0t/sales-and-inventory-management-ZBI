@@ -18,5 +18,5 @@ requests==2.32.3
 tablib==3.6.1
 
 gunicorn==23.0.0
-wnitenoise==6.11.0
+whitenoise==6.11.0
 psycopg2-binary==2.9.11
