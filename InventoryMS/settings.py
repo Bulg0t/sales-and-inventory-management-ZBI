@@ -9,12 +9,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-g_n2+2bznu6e@1wel!i(&-4tp86_7lop5395ww+i4x%9*7^old'
+#SECRET_KEY = 'django-insecure-g_n2+2bznu6e@1wel!i(&-4tp86_7lop5395ww+i4x%9*7^old'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['zbi-inventory-app-axfcfebbawe7abet.italynorth-01.azurewebsites.net', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,6 +86,20 @@ DATABASES = {
     }
 }
 
+DB_HOST = os.environ.get('zbi-inventory-app-server.postgres.database.azure.com')
+DB_NAME = os.environ.get('zbi-inventory-app-database')
+DB_USER = os.environ.get('xrvfejudar')
+DB_PASSWORD = os.environ.get('$sx0tyoPJUkcO6Ka')
+
+if DB_HOST:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+        'PASSWORD': DB_PASSWORD,
+        'HOST': DB_HOST,
+        'PORT': '5432',
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -125,6 +141,7 @@ LOGOUT_URL = 'logout'
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')
 ]
+STATIC_ROOT = os.path.join(BASE_DRI, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
 MEDIA_URL = '/images/'
 
@@ -135,3 +152,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+SCM_DO_BUILD_DURING_DEPLOYMENT = True
