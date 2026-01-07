@@ -81,29 +81,6 @@ WSGI_APPLICATION = 'InventoryMS.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-
-import os
-from pathlib import Path
-from dotenv import load_dotenv  # <--- Importujemy to
-
-# Ładujemy zmienne z pliku .env (jeśli istnieje - czyli tylko lokalnie)
-load_dotenv()
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# 1. SECRET KEY
-# Pobierz z otoczenia. Jeśli nie ma (błąd konfiguracji), rzuć błędem lub użyj tymczasowego
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
-# 2. DEBUG
-# Uwaga: Zmienne środowiskowe to zawsze TEKST. Musimy zamienić tekst "True" na logikę.
-# Jeśli w zmiennych jest słowo 'True', to DEBUG będzie włączony. W przeciwnym razie False.
-#DEBUG = os.environ.get('DEBUG') == 'True'
-
-ALLOWED_HOSTS = ['zbi-inventory-app.azurewebsites.net', 'localhost', '127.0.0.1']
-
-# ...
-
 # 3. DATABASE
 # Tutaj robimy "sprytny" warunek.
 # Jeśli Azure podstawił nam dane do bazy (czyli zmienna DB_HOST istnieje) -> Używamy Postgresa.
@@ -159,11 +136,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 LOGIN_URL = 'user-login'
@@ -173,22 +147,43 @@ LOGOUT_URL = 'logout'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')
-]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
-MEDIA_URL = '/images/'
+#STATIC_URL = 'static/'
+#STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')
+#]
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+#MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+#MEDIA_URL = '/images/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+#DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+#CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+
+#SCM_DO_BUILD_DURING_DEPLOYMENT = True
+
+#SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+STATIC_URL = 'static/'
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+
+MEDIA_URL = '/images/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-
-SCM_DO_BUILD_DURING_DEPLOYMENT = True
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
